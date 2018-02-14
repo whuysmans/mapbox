@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.0/mapbox-gl.js'></script>
+    <title>support</title>
+    <style>
+      body { margin: 0; padding: 0; }
+      #map { position: absolute; top: 0; bottom: 0; width: 100% }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <style>
+      .marker {
+          background-image: url('pin.svg');
+          background-size: cover;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          cursor: pointer;
+      }
+      .marker.plant {
+        background-image: url('marker-red.svg');
+      }
+      .marker.sales {
+        background-image: url('marker-yellow.svg');
+      }
+      .marker.headquarter {
+        background-image: url('marker-blue.svg');
+      }
+
+      .mapboxgl-popup {
+          max-width: 200px;
+      }
+    </style>
+    <script>
+      // required are name, coords and type
+      var locations = [
+        {
+          name: 'HRAD',
+          coords: [14.843388, 50.866544],
+          type: 'plant',
+          radius: 0,
+          fillKey: 'gt50'
+        }, 
+        {
+          name: 'NIZN',
+          coords: [14.843399, 50.866422],
+          type: 'plant',
+          radius: 0,
+          fillKey: 'lt50'
+        }, 
+        {
+          name: 'WAKE',
+          coords: [-1.386891, 53.650339],
+          type: 'sales',
+          radius: 0,
+          fillKey: 'gt50'
+        },
+        {
+          name: 'NHAST',
+          type: 'sales',
+          coords: [-91.455579, 44.826537]
+        },
+        {
+          name: 'ZELE',
+          coords: [4.048535, 51.073516],
+          type: 'headquarter'
+        }
+      ]
+      // token for mapbox.com account
+      mapboxgl.accessToken = 'pk.eyJ1IjoiZGV3ZXJuZXIiLCJhIjoiY2pkZDRnenE2MGsydDJ3dWlrdzJ4MXdvOCJ9.BmmpyB1818u9Od3nwIQg_A';
+      var map = new mapboxgl.Map({
+        container: 'map',
+        // identifier for custom style
+        style: 'mapbox://styles/dewerner/cjdmz0b840pyo2rr5llujnpvg',
+        center: [1, 37.8],
+        zoom: 1.8
+      })
+      // create the markers
+      locations.forEach(function(loc) {
+        var el = document.createElement('div')
+        el.id = loc.name
+        // give them classnames
+        el.className = 'marker' + ' ' + loc.type
+        // and a popup
+        var popup = new mapboxgl.Popup()
+          .setText('Plant ' + loc.name)
+        new mapboxgl.Marker(el)
+          .setLngLat(loc.coords)
+          .setPopup(popup)
+          .addTo(map)
+      })
+      // remove the country names (which are default) on load
+      map.on('load', function(e) {
+        e.target.style.stylesheet.layers.forEach(function(layer) {
+          if (layer.type === 'symbol') {
+            map.removeLayer(layer.id)
+          }
+        })
+      })
+      
+    </script>
+  </body>
+</html>
